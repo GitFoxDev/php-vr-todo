@@ -62,7 +62,7 @@
 			getGoto();
 			function addGoto() 
 			{
-				if (($('#add_txt').val() != '') && ($('#add_date').val() != ''))
+				if (($('#add_txt').val() !== '') && ($('#add_date').val() !== ''))
 				{
 					var tquery = 'act=addGoto&params=' + $('#add_txt').val() + ';' + $('#add_date').val();
 					$.ajax ({
