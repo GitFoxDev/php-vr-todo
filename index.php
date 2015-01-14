@@ -3,7 +3,26 @@
 ?>
 <html>
 	<head>
-		<script src="jquery-2.1.3.min.js"></script>
+		<script src="include/jquery-2.1.3.min.js"></script>
+		<script src="include/jquery-ui-1.11.2/jquery-ui.min.js"></script>
+		<script src="include/jquery-ui-1.11.2/jquery-ui.rus.js"></script>
+		<link rel="stylesheet" href="include/jquery-ui-1.11.2/jquery-ui.css">
+		<style>
+			.to-mes-error { color: red; }
+			.to-mes-success { color: green; }
+		</style>
+		<script>
+			$(function() {
+				$( "#add_date" ).datepicker({
+					changeMonth: true,
+					changeYear: true,
+					dateFormat: 'dd.mm.yy',
+					regional: 'ru',
+					minDate: '-2Y',
+					maxDate: '+10Y'
+				});
+			});
+		</script>
 	</head>
 	<body>
 		<div class="wrapper">
@@ -11,10 +30,11 @@
 				<div class="to-header">Список запланированных дел:</div>
 				<div class="to-do">Загрузка списка запланированных дел...</div>
 				<div class="to-new">
-					<input type="text" placeholder="Что нужно сделать?" name="add_txt" id="add_txt">
-					<input type="date" placeholder="Когда сделать?" name="add_date" id="add_date">
+					<input type="text" placeholder="Что нужно сделать?" name="add_txt" id="add_txt" required>
+					<input type="date" placeholder="Когда сделать?" name="add_date" id="add_date" required>
 					<button onClick="addGoto()">Добавить</button>
 				</div>
+				<div class="to-error"></div>
 			</div>
 			<div class="to-right">
 				<div class="to-header">Операции</div>
@@ -40,16 +60,22 @@
 				});
 			}
 			getGoto();
-			function addGoto() {
-				var tquery = 'act=addGoto&params=' + $('#add_txt').val() + ';' + $('#add_date').val();
-				$.ajax ({
-					type: "POST", url: 'getdata.php',
-					data: tquery, dataType : "text",
-					success: function (data) {
-						$('.to-do').html(data);
-					}
-				});
-				getGoto();
+			function addGoto() 
+			{
+				if (($('#add_txt').val() != '') && ($('#add_date').val() != ''))
+				{
+					var tquery = 'act=addGoto&params=' + $('#add_txt').val() + ';' + $('#add_date').val();
+					$.ajax ({
+						type: "POST", url: 'getdata.php',
+						data: tquery, dataType : "text",
+						success: function (data) {
+							$('.to-error').html(data);
+						}
+					});
+					getGoto();
+				}
+				else {
+					$('.to-error').html('<span class="to-mes-error">Заполните все поля!</span>'); }
 			}
 			
 			//});
