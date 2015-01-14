@@ -11,9 +11,9 @@
 				<div class="to-header">Список запланированных дел:</div>
 				<div class="to-do">Загрузка списка запланированных дел...</div>
 				<div class="to-new">
-					<input type="text" placeholder="Что нужно сделать?">
-					<input type="date" placeholder="Когда сделать?">
-					<button>Добавить</button>
+					<input type="text" placeholder="Что нужно сделать?" name="add_txt" id="add_txt">
+					<input type="date" placeholder="Когда сделать?" name="add_date" id="add_date">
+					<button onClick="addGoto()">Добавить</button>
 				</div>
 			</div>
 			<div class="to-right">
@@ -30,15 +30,28 @@
 		</div>
 		<script language="javascript" type="text/javascript">
 			//$('.b1').click( function() {
-			$.ajax({
-				type: "POST",
-				url: 'getdata.php',
-				data: "act=getGoto",
-				dataType : "text",
-				success: function (data) {
-					$('.to-do').html(data);
-				}
-			});
+			function getGoto() {
+				$.ajax ({
+					type: "POST", url: 'getdata.php',
+					data: "act=getGoto", dataType : "text",
+					success: function (data) {
+						$('.to-do').html(data);
+					}
+				});
+			}
+			getGoto();
+			function addGoto() {
+				var tquery = 'act=addGoto&params=' + $('#add_txt').val() + ';' + $('#add_date').val();
+				$.ajax ({
+					type: "POST", url: 'getdata.php',
+					data: tquery, dataType : "text",
+					success: function (data) {
+						$('.to-do').html(data);
+					}
+				});
+				getGoto();
+			}
+			
 			//});
 		</script>
 	</body>
