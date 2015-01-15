@@ -42,7 +42,7 @@
 					<ul>
 						<li><button name="b1" class="to-button">Удалить выполненные</button></li>
 						<li><button name="b2" class="to-button">Записать в базу</button></li>
-						<li><button name="b3" class="to-button">Очистить кэш</button></li>
+						<li><button name="b3" class="to-button" onClick="clearCache()">Очистить кэш</button></li>
 						<li><button name="b4" class="to-button">Удалить всё!</button></li>
 					</ul>
 				</div>
@@ -64,7 +64,7 @@
 			{
 				if (($('#add_txt').val() !== '') && ($('#add_date').val() !== ''))
 				{
-					var tquery = 'r=goto/add&params=' + $('#add_txt').val() + ';' + $('#add_date').val();
+					var tquery = 'r=goto/addcache&params=' + $('#add_txt').val() + ';' + $('#add_date').val();
 					$.ajax ({
 						type: "POST", url: 'getdata.php',
 						data: tquery, dataType : "text",
@@ -72,12 +72,22 @@
 							$('.to-error').html(data);
 						}
 					});
-					getGoto();
+					setTimeout(getGoto(),10000);
 				}
 				else {
 					$('.to-error').html('<span class="to-mes-error">Заполните все поля!</span>'); }
 			}
-			
+			function clearCache()
+			{
+				$.ajax ({
+					type: "POST", url: 'getdata.php',
+					data: "r=goto/clear", dataType : "text",
+					/*success: function (data) {
+						$('.to-do').html(data);
+					}*/
+				});
+				setTimeout(getGoto(),10000);
+			}
 			//});
 		</script>
 	</body>
