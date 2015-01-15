@@ -39,27 +39,59 @@
 			<div class="to-right">
 				<div class="to-header">Операции</div>
 				<div class="to-act">
-					<ul>
-						<li><button name="b1" class="to-button">Удалить выполненные</button></li>
-						<li><button name="b2" class="to-button">Записать в базу</button></li>
-						<li><button name="b3" class="to-button" onClick="clearCache()">Очистить кэш</button></li>
-						<li><button name="b4" class="to-button">Удалить всё!</button></li>
-					</ul>
+					<button id="b1" class="to-button" onClick="setCom()">Выполнить</button>
+					<button id="b2" class="to-button" onClick="setUncom()">Вернуть в работу</button>
+					<button id="b3" class="to-button" onClick="deleteComs()" style="display: none;">Удалить выполненные</button>
+					<button id="b4" class="to-button" onClick="addDb()">Записать в базу</button>
+					<button id="b5" class="to-button" onClick="clearCache()">Очистить кэш</button>
+					<button id="b6" class="to-button" onClick="deleteAll()">Удалить всё!</button>
 				</div>
 			</div>
 		</div>
 		<script language="javascript" type="text/javascript">
+			/*function f(el) 
+			{
+				//$('#add_date').val()
+				if ($("#" + el.id).prop("checked")) {
+					$('#b1').removeAttr('style');
+					//alert(el.id);
+				}
+				else {
+					$('#b1').attr('style', 'display: none;');
+				}
+			}*/
+			/*$(".stcheck").click(function(){
+				var id_click = ($this).attr("n");
+				$('.to-error').html(id_click);
+				alert( '#' + id_click );
+			});
+			function statusCheckbox() {
+				//if ($("#myCheckbox").prop("checked"))
+				//$('.to-error').html($(this).className);
+				var id_click = ($this).attr("name");
+				$('.to-error').html(id_click);
+				alert( '#' + id_click );
+			}*/
 			//$('.b1').click( function() {
-			function getGoto() {
+			
+			function getGoto() 
+			{
 				$.ajax ({
 					type: "POST", url: 'getdata.php',
 					data: "r=goto/get", dataType : "text",
 					success: function (data) {
 						$('.to-do').html(data);
+						$('#b3').attr('style', 'display: none;');
+						if(data.indexOf('issetcom') + 1) 
+						{ 
+							$('#b3').removeAttr('style'); 
+						}
 					}
 				});
 			}
 			getGoto();
+			
+			//setInterval(getGoto,5000);
 			function addGoto() 
 			{
 				if (($('#add_txt').val() !== '') && ($('#add_date').val() !== ''))
@@ -72,7 +104,7 @@
 							$('.to-error').html(data);
 						}
 					});
-					setTimeout(getGoto(),10000);
+					setTimeout(getGoto,3000);
 				}
 				else {
 					$('.to-error').html('<span class="to-mes-error">Заполните все поля!</span>'); }
@@ -86,7 +118,65 @@
 						$('.to-do').html(data);
 					}*/
 				});
-				setTimeout(getGoto(),10000);
+				setTimeout(getGoto,3000);
+			}
+			function addDb()
+			{
+				var tquery = 'r=goto/adddb&' + $("#formz").serialize();
+				$.ajax ({
+						type: "POST", url: 'getdata.php',
+						data: tquery, dataType : "text",
+						success: function (data) {
+							$('.to-error').html(data);
+						}
+					});
+				setTimeout(getGoto,3000);
+			}
+			function deleteAll()
+			{
+				$.ajax ({
+					type: "POST", url: 'getdata.php',
+					data: "r=goto/deleteall", dataType : "text",
+					/*success: function (data) {
+						$('.to-do').html(data);
+					}*/
+				});
+				setTimeout(getGoto,3000);
+			}
+			function setCom()
+			{
+				var tquery = 'r=goto/setcom&' + $("#formz").serialize();
+				$.ajax ({
+					type: "POST", url: 'getdata.php',
+					data: tquery, dataType : "text",
+					success: function (data) {
+							$('.to-error').html(data);
+					}
+				});
+				setTimeout(getGoto,3000);
+			}
+			function setUncom()
+			{
+				var tquery = 'r=goto/setuncom&' + $("#formz").serialize();
+				$.ajax ({
+					type: "POST", url: 'getdata.php',
+					data: tquery, dataType : "text",
+					/*success: function (data) {
+						$('.to-do').html(data);
+					}*/
+				});
+				setTimeout(getGoto,3000);
+			}
+			function deleteComs()
+			{
+				$.ajax ({
+					type: "POST", url: 'getdata.php',
+					data: "r=goto/deletecoms", dataType : "text",
+					/*success: function (data) {
+						$('.to-do').html(data);
+					}*/
+				});
+				setTimeout(getGoto,3000);
 			}
 			//});
 		</script>
