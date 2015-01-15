@@ -53,7 +53,7 @@
 			function getGoto() {
 				$.ajax ({
 					type: "POST", url: 'getdata.php',
-					data: "act=getGoto", dataType : "text",
+					data: "r=goto/get", dataType : "text",
 					success: function (data) {
 						$('.to-do').html(data);
 					}
@@ -64,7 +64,7 @@
 			{
 				if (($('#add_txt').val() !== '') && ($('#add_date').val() !== ''))
 				{
-					var tquery = 'act=addGoto&params=' + $('#add_txt').val() + ';' + $('#add_date').val();
+					var tquery = 'r=goto/add&params=' + $('#add_txt').val() + ';' + $('#add_date').val();
 					$.ajax ({
 						type: "POST", url: 'getdata.php',
 						data: tquery, dataType : "text",
