@@ -1,6 +1,3 @@
-<?php
-
-?>
 <html>
 	<head>
 		<script src="include/jquery-2.1.3.min.js"></script>
@@ -8,8 +5,42 @@
 		<script src="include/jquery-ui-1.11.2/jquery-ui.rus.js"></script>
 		<link rel="stylesheet" href="include/jquery-ui-1.11.2/jquery-ui.css">
 		<style>
+			html {height: 100%;}
 			.to-mes-error { color: red; }
 			.to-mes-success { color: green; }
+			.wrapper {
+				width: 900px;
+				margin: 0 auto;
+			}
+			.to-left, .to-right, .to-footer { float: left; padding: 15px; }
+			.to-left { 
+				width: 551px; 
+				border: 2px solid black; 
+				margin-right: 15px;
+			}
+			.to-right { 
+				width: 264px; 
+				border: 3px solid black; 
+				background:#eee;
+			}
+			.to-header {
+				font-size: 26px;
+				margin-bottom: 15px;
+			}
+			.to-right .to-header {
+				text-align: center;
+			}
+			.to-right button {
+				width: 250px;
+				margin-bottom: 5px;
+			}
+			.to-footer {
+				width: 866px;
+				text-align: center;
+				border: 2px solid #b6b6b6; 
+				color: #838383;
+				margin-top: 20px;
+			}
 		</style>
 		<script>
 			$(function() {
@@ -26,28 +57,32 @@
 	</head>
 	<body>
 		<div class="wrapper">
-			<div class="to-left">
-				<div class="to-header">Список запланированных дел:</div>
-				<div class="to-do">Загрузка списка запланированных дел...</div>
-				<div class="to-new">
-					<input type="text" placeholder="Что нужно сделать?" name="add_txt" id="add_txt" required>
-					<input type="date" placeholder="Когда сделать?" name="add_date" id="add_date" required>
-					<button onClick="addGoto()">Добавить</button>
+			<div class="to-columns">
+				<div class="to-left">
+					<div class="to-header">Список запланированных дел:</div>
+					<div class="to-do">Загрузка списка запланированных дел...</div>
+					<div class="to-new">
+						<input type="text" placeholder="Что нужно сделать?" name="add_txt" id="add_txt" required>
+						<input type="date" placeholder="Когда сделать?" name="add_date" id="add_date" required>
+						<button onClick="addGoto()">Добавить</button>
+					</div>
+					<div class="to-error"></div>
 				</div>
-				<div class="to-error"></div>
-			</div>
-			<div class="to-right">
-				<div class="to-header">Операции</div>
-				<div class="to-act">
-					<button id="b1" class="to-button" onClick="setCom()">Выполнить</button>
-					<button id="b2" class="to-button" onClick="setUncom()">Вернуть в работу</button>
-					<button id="b3" class="to-button" onClick="deleteComs()" style="display: none;">Удалить выполненные</button>
-					<button id="b4" class="to-button" onClick="addDb()">Записать в базу</button>
-					<button id="b5" class="to-button" onClick="clearCache()">Очистить кэш</button>
-					<button id="b6" class="to-button" onClick="deleteAll()">Удалить всё!</button>
+				<div class="to-right">
+					<div class="to-header">Операции</div>
+					<div class="to-act">
+						<button id="b1" class="to-button" onClick="setCom()">Выполнить</button>
+						<button id="b2" class="to-button" onClick="setUncom()" style="margin-bottom: 20px;">Вернуть в работу</button>
+						<button id="b4" class="to-button" onClick="addDb()">Записать в базу</button>
+						<button id="b5" class="to-button" onClick="clearCache()"style="margin-bottom: 20px;">Очистить кэш</button>
+						<button id="b3" class="to-button-delcoms" onClick="deleteComs()" style="display: none;">Удалить выполненные</button>
+						<button id="b6" class="to-button" onClick="deleteAll()">Удалить всё!</button>
+					</div>
 				</div>
 			</div>
+			<div class="to-footer">ToDo © FoxDev</div>
 		</div>
+
 		<script language="javascript" type="text/javascript">
 			/*function f(el) 
 			{
@@ -72,8 +107,6 @@
 				$('.to-error').html(id_click);
 				alert( '#' + id_click );
 			}*/
-			//$('.b1').click( function() {
-			
 			function getGoto() 
 			{
 				$.ajax ({
@@ -85,6 +118,7 @@
 						if(data.indexOf('issetcom') + 1) 
 						{ 
 							$('#b3').removeAttr('style'); 
+							setEqualHeight();
 						}
 					}
 				});
@@ -178,7 +212,6 @@
 				});
 				setTimeout(getGoto,3000);
 			}
-			//});
 		</script>
 	</body>
 </html>
