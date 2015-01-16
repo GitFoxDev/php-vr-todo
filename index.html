@@ -136,9 +136,9 @@
 						data: tquery, dataType : "text",
 						success: function (data) {
 							$('.to-error').html(data);
+							getGoto();
 						}
 					});
-					setTimeout(getGoto,3000);
 				}
 				else {
 					$('.to-error').html('<span class="to-mes-error">Заполните все поля!</span>'); }
@@ -148,11 +148,10 @@
 				$.ajax ({
 					type: "POST", url: 'getdata.php',
 					data: "r=goto/clear", dataType : "text",
-					/*success: function (data) {
-						$('.to-do').html(data);
-					}*/
+					success: function (data) {
+						getGoto();
+					}
 				});
-				setTimeout(getGoto,3000);
 			}
 			function addDb()
 			{
@@ -162,20 +161,19 @@
 						data: tquery, dataType : "text",
 						success: function (data) {
 							$('.to-error').html(data);
+							getGoto();
 						}
 					});
-				setTimeout(getGoto,3000);
 			}
 			function deleteAll()
 			{
 				$.ajax ({
 					type: "POST", url: 'getdata.php',
 					data: "r=goto/deleteall", dataType : "text",
-					/*success: function (data) {
-						$('.to-do').html(data);
-					}*/
+					success: function (data) {
+						getGoto();
+					}
 				});
-				setTimeout(getGoto,3000);
 			}
 			function setCom()
 			{
@@ -184,10 +182,10 @@
 					type: "POST", url: 'getdata.php',
 					data: tquery, dataType : "text",
 					success: function (data) {
-							$('.to-error').html(data);
+						$('.to-error').html(data);
+						getGoto();
 					}
 				});
-				setTimeout(getGoto,3000);
 			}
 			function setUncom()
 			{
@@ -195,22 +193,21 @@
 				$.ajax ({
 					type: "POST", url: 'getdata.php',
 					data: tquery, dataType : "text",
-					/*success: function (data) {
+					success: function (data) {
 						$('.to-do').html(data);
-					}*/
+						getGoto();
+					}
 				});
-				setTimeout(getGoto,3000);
 			}
 			function deleteComs()
 			{
 				$.ajax ({
 					type: "POST", url: 'getdata.php',
 					data: "r=goto/deletecoms", dataType : "text",
-					/*success: function (data) {
-						$('.to-do').html(data);
-					}*/
+					success: function (data) {
+						getGoto();
+					}
 				});
-				setTimeout(getGoto,3000);
 			}
 		</script>
 	</body>
