@@ -3,66 +3,60 @@ class GotoController extends CController
 {
 	public function actionGet()
 	{
-		$cache = Yii::app()->cache;
-		$array = $cache->get('c1');
-		if(is_array($array))
-		{
-			foreach ($array as $value)
-			{
+		$array = Yii::app()->cache->get('c1');
+		if (is_array($array)) {
+			foreach ($array as $value) {
 				$newarray[] = ['txt' => $value['txt'], 'date' => $value['date'], 'statusIn' => 'cache', 'com' => 0];
 			}
 		}
 		
-		$link = Yii::app()->db;
-		$query = $link->createCommand('SELECT * FROM `variant_todo`');
-		$rows = $query->query();
-		foreach ($rows as $value)
-			{
-				$newarray[] = ['txt' => $value['name'], 'date' => $value['date'], 'statusIn' => 'db', 'com' => $value['com'], 'did' => $value['id']];
-			}
-		if (isset($newarray))
-		{
+		$rows = Yii::app()->db->createCommand()
+				->select('*')
+				->from('variant_todo')
+				->queryAll();
+		foreach ($rows as $value) {
+			$newarray[] = ['txt' => $value['name'], 'date' => $value['date'], 'statusIn' => 'db', 'com' => $value['com'], 'did' => $value['id']];
+		}
+
+		if (isset($newarray)) {
 			foreach ($newarray as $r)
 				$date[] = $r['date'];
+
 			array_multisort($date, SORT_ASC, $newarray);
 			$i = 1;
 			echo '<form id="formz">';
-			foreach ($newarray as $value)
-				{
-					$this->getGoto($i, $value);
-					$i++;
-				}
+			foreach ($newarray as $value) {
+                $this->getGoto($i, $value);
+                $i++;
+            }
 			echo '</form>';
 		}
 	}
 	
-	public function actionAddcache()
+	public function actionAddCache()
 	{
 		$params = $_POST['params'];
 		$error = null; $success = null;
 		$params = explode(';', $params);
-		if (count($params) == 2)
-		{
+		if (count($params) == 2) {
 			list($txt, $date) = $params;
 			
-			if(($txt == null) OR ($date == null))
+			if (($txt == null) OR ($date == null))
 				$error = 'Заполните все поля!';
 			elseif (!$this->isDate($date))
 				$error = 'Не верный формат даты!';
-			else
-				{
-				/*МОЖНО ДОБАВЛЯТЬ В КЭШ*/
-				$cache = Yii::app()->cache;
-				if ($cache->get('c1') != null) 
-					$array = $cache->get('c1');
-				$array[] = array(
-					'txt' => $txt, 
-					'date' => $this->getNixdate($date),
-					'com' => 0,
-				);
-				$cache->set('c1', $array);
-				$success = 'Успешно! Можно добавить еще дело ;)';
-				}
+			else {
+                /*МОЖНО ДОБАВЛЯТЬ В КЭШ*/
+                if (Yii::app()->cache->get('c1') != null)
+                    $array = Yii::app()->cache->get('c1');
+                $array[] = array(
+                    'txt' => $txt,
+                    'date' => $this->getNixdate($date),
+                    'com' => 0,
+                );
+                    Yii::app()->cache->set('c1', $array);
+                $success = 'Успешно! Можно добавить еще дело ;)';
+            }
 				
 			if ($error != null) echo '<span class="to-mes-error">'.$error.'</span>';
 			if ($success != null) echo '<span class="to-mes-success">'.$success.'</span>';
@@ -71,75 +65,64 @@ class GotoController extends CController
 	
 	public function actionClear()
 	{
-		$cache = Yii::app()->cache;
-		$cache->set('c1', '');
+        Yii::app()->cache->set('c1', '');
 	}
 	
-	public function actionAdddb()
+	public function actionAddDB()
 	{
-		foreach ($_POST as $key => $value)
-		{
-			$id = explode('_', $key);
-			if (substr_count($key, 'txt') > 0) 
-				$data[$id[1]]['txt'] = $value;
-			if (substr_count($key, 'statusIn') > 0) 
-				$data[$id[1]]['statusIn'] = $value;
-			if (substr_count($key, 'date') > 0) 
-				$data[$id[1]]['date'] = $value;
-		}
-		foreach ($data as $key => $value)
-		{
-			if ($value['statusIn'] == 'db') unset($data[$key]);
+        $data = array();
+
+		foreach ($_POST as $key => $value) {
+            $id = explode('_', $key);
+            if (substr_count($key, 'txt') > 0)
+                $data[$id[1]]['txt'] = $value;
+            if (substr_count($key, 'statusIn') > 0)
+                $data[$id[1]]['statusIn'] = $value;
+            if (substr_count($key, 'date') > 0)
+                $data[$id[1]]['date'] = $value;
 		}
 
-		$link = Yii::app()->db;
-		//$query = $link->createCommand("INSERT INTO `variant_todo` (`name`, `date`, `com`) VALUES (:name, :date, :com)");
-		foreach ($data as $value)
-		{
-			$query = $link->createCommand("INSERT INTO `variant_todo` (`name`, `date`, `com`) VALUES ('".$value['txt']."', '".$value['date']."', 0)");
-			$query->execute();
-			/*$query->bindParam(":name", $value['txt'], PDO::PARAM_STR);
-			$query->bindParam(":date", $value['date'], PDO::PARAM_STR);
-			$query->bindParam(":com", 0, PDO::PARAM_STR);*/
+		foreach ($data as $key => $value) {
+            if ($value['statusIn'] == 'db')
+                unset($data[$key]);
+        }
+
+		foreach ($data as $value) {
+            Yii::app()->db->createCommand()->insert('variant_todo', array(
+                'name' => $value['txt'],
+                'date' => $value['date'],
+                'com' => 0
+            ));
 		}
 		$this->actionClear();
-		/*foreach ($data as $value)
-		{
-			$insert = new Todos;
-			$insert->name = $value['txt'];
-			$insert->date = $value['date'];
-			$insert->com = 1;
-			$insert->save();
-		}*/
-		//print_r($data);
-	}
+    }
 	
-	public function actionDeleteall()
+	public function actionDeleteAll()
 	{
 		$this->actionClear();
-		$link = Yii::app()->db;
-		$link->createCommand("DELETE FROM `variant_todo`")->execute();
+        Yii::app()->db->createCommand()->delete('variant_todo');
 	}
 	
-	public function actionSetcom()
+	public function actionSetCom()
 	{
 		$this->updateCom($_POST, 1);
 	}
-	public function actionSetuncom()
+
+	public function actionUnsetCom()
 	{
 		$this->updateCom($_POST, 0);
 	}
 	
-	public function actionDeletecoms()
+	public function actionDeleteComs()
 	{
-		$link = Yii::app()->db;
-		$link->createCommand("DELETE FROM `variant_todo` WHERE `com`='1'")->execute();
+        Yii::app()->db->createCommand()->delete('variant_todo', 'com=1');
 	}
 	
 	private function updateCom($dataz, $param)
 	{
-		foreach ($dataz as $key => $value)
-		{
+        $data = array();
+
+		foreach ($dataz as $key => $value) {
 			$id = explode('_', $key);
 			if (substr_count($key, 'ck') > 0) 
 				$data[$id[1]]['ck'] = 1;
@@ -152,18 +135,16 @@ class GotoController extends CController
 			if (substr_count($key, 'did') > 0) 
 				$data[$id[1]]['did'] = $value;
 		}
-		foreach ($data as $key => $value)
-		{
+
+		foreach ($data as $key => $value) {
 			if ($value['ck'] != 1) unset($data[$key]);
 		}
-		
-		$link = Yii::app()->db;
-		foreach ($data as $value)
-		{
-			if ($value['statusIn'] == 'db')
-			{
-				$query = $link->createCommand("UPDATE `variant_todo` SET `com`='".$param."' WHERE `id`='".$value['did']."'");
-				$query->execute();
+
+		foreach ($data as $value) {
+			if ($value['statusIn'] == 'db') {
+                Yii::app()->db->createCommand()->update('variant_todo', array(
+                    'com' => $param,
+                ), 'id=:id', array(':id' => $value['did']));
 			}
 		}
 	}
@@ -175,11 +156,13 @@ class GotoController extends CController
 		if (($date[2] > 2025) OR ($date[2] < 2014)) $isDate = false;
 		return $isDate;
 	}
+
 	private function getNixdate($date)
 	{
 		$date = explode('.', $date);
 		return mktime(0,0,0,$date[1],$date[0],$date[2]);
 	}
+
 	private function getGoto($id, array $goto)
 	{
 		$status = $this->getStatusgoto($goto);
@@ -193,6 +176,7 @@ class GotoController extends CController
 			echo '<issetcom />';
 		echo ' <span style="color:'.$status['color'].';">'.$goto['txt'].' | '.date("d.m.Y",$goto['date']).' ('.$status['txt'].')</span><br>';
 	}
+
 	private function getStatusgoto(array $goto)
 	{
 		$currentTime = time();
@@ -216,21 +200,16 @@ class GotoController extends CController
 		// 2 - выполнен и в БД
 		// 3 - просрочен и в кэше
 		// 4 - просрочен и в БД
-		if ($statusCom == 1)
-		{ 
+		if ($statusCom == 1) {
 			$status['sum'] = 2; 
 			$status['color'] = 'green'; 
 			$status['txt'] = 'этот выполнен и в БД';
-		}
-		elseif (($statusCom == 0) AND ($statusTime == 1))
-		{ 
+		} elseif (($statusCom == 0) AND ($statusTime == 1)) {
 			$status['sum'] = ($statusCache > 0 ? 0 : 1);
 			$status['color'] = ($statusCache > 0 ? 'grey' : 'black');
 			$status['txt'] = ($statusCache > 0 ? 'в кэше и не выполнен' : 'в БД и не выполнен');
 			
-		}
-		else
-		{
+		} else {
 			$status['sum'] = ($statusCache > 0 ? 3 : 4);
 			$status['color'] = ($statusCache > 0 ? 'grey' : 'red');
 			$status['txt'] = ($statusCache > 0 ? 'в кэше и просрочен' : 'в БД и просрочен');

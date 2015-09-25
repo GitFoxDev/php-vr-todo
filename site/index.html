@@ -72,8 +72,8 @@
 					<div class="to-header">Операции</div>
 					<div class="to-act">
 						<button id="b1" class="to-button" onClick="setCom()">Выполнить</button>
-						<button id="b2" class="to-button" onClick="setUncom()" style="margin-bottom: 20px;">Вернуть в работу</button>
-						<button id="b4" class="to-button" onClick="addDb()">Записать в базу</button>
+						<button id="b2" class="to-button" onClick="unsetCom()" style="margin-bottom: 20px;">Вернуть в работу</button>
+						<button id="b4" class="to-button" onClick="addDB()">Записать в базу</button>
 						<button id="b5" class="to-button" onClick="clearCache()"style="margin-bottom: 20px;">Очистить кэш</button>
 						<button id="b3" class="to-button-delcoms" onClick="deleteComs()" style="display: none;">Удалить выполненные</button>
 						<button id="b6" class="to-button" onClick="deleteAll()">Удалить всё!</button>
@@ -84,29 +84,6 @@
 		</div>
 
 		<script language="javascript" type="text/javascript">
-			/*function f(el) 
-			{
-				//$('#add_date').val()
-				if ($("#" + el.id).prop("checked")) {
-					$('#b1').removeAttr('style');
-					//alert(el.id);
-				}
-				else {
-					$('#b1').attr('style', 'display: none;');
-				}
-			}*/
-			/*$(".stcheck").click(function(){
-				var id_click = ($this).attr("n");
-				$('.to-error').html(id_click);
-				alert( '#' + id_click );
-			});
-			function statusCheckbox() {
-				//if ($("#myCheckbox").prop("checked"))
-				//$('.to-error').html($(this).className);
-				var id_click = ($this).attr("name");
-				$('.to-error').html(id_click);
-				alert( '#' + id_click );
-			}*/
 			function getGoto() 
 			{
 				$.ajax ({
@@ -130,7 +107,7 @@
 			{
 				if (($('#add_txt').val() !== '') && ($('#add_date').val() !== ''))
 				{
-					var tquery = 'r=goto/addcache&params=' + $('#add_txt').val() + ';' + $('#add_date').val();
+					var tquery = 'r=goto/addCache&params=' + $('#add_txt').val() + ';' + $('#add_date').val();
 					$.ajax ({
 						type: "POST", url: 'getdata.php',
 						data: tquery, dataType : "text",
@@ -153,9 +130,9 @@
 					}
 				});
 			}
-			function addDb()
+			function addDB()
 			{
-				var tquery = 'r=goto/adddb&' + $("#formz").serialize();
+				var tquery = 'r=goto/addDB&' + $("#formz").serialize();
 				$.ajax ({
 						type: "POST", url: 'getdata.php',
 						data: tquery, dataType : "text",
@@ -169,7 +146,7 @@
 			{
 				$.ajax ({
 					type: "POST", url: 'getdata.php',
-					data: "r=goto/deleteall", dataType : "text",
+					data: "r=goto/deleteAll", dataType : "text",
 					success: function (data) {
 						getGoto();
 					}
@@ -177,7 +154,7 @@
 			}
 			function setCom()
 			{
-				var tquery = 'r=goto/setcom&' + $("#formz").serialize();
+				var tquery = 'r=goto/setCom&' + $("#formz").serialize();
 				$.ajax ({
 					type: "POST", url: 'getdata.php',
 					data: tquery, dataType : "text",
@@ -187,9 +164,9 @@
 					}
 				});
 			}
-			function setUncom()
+			function unsetCom()
 			{
-				var tquery = 'r=goto/setuncom&' + $("#formz").serialize();
+				var tquery = 'r=goto/unseCom&' + $("#formz").serialize();
 				$.ajax ({
 					type: "POST", url: 'getdata.php',
 					data: tquery, dataType : "text",
@@ -203,7 +180,7 @@
 			{
 				$.ajax ({
 					type: "POST", url: 'getdata.php',
-					data: "r=goto/deletecoms", dataType : "text",
+					data: "r=goto/deleteComs", dataType : "text",
 					success: function (data) {
 						getGoto();
 					}

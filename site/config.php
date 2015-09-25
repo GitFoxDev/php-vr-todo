@@ -1,4 +1,5 @@
 <?php
+
 return array(
-    'api_url' => 'api.variant-todo.loc'
+    'api_url' => 'variant-todo.dev/api'
 );
